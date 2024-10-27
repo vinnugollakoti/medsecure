@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from "axios";
 
 const PatientsDashboard = () => {
+  const userId = '12345';
   const [formData, setFormData] = useState({
     patientName: '',
     problem: '',
@@ -14,7 +15,8 @@ const PatientsDashboard = () => {
     image: null,
   });
 
-  const [imagePreview, setImagePreview] = useState(null); // State for image preview
+  const [imagePreview, setImagePreview] = useState(null);
+  const [submissions, setSubmissions] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,7 +31,7 @@ const PatientsDashboard = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = async () => {
-        setImagePreview(reader.result); // Set the image preview
+        setImagePreview(reader.result);
 
         try {
           const response = await axios.post(
@@ -39,7 +41,6 @@ const PatientsDashboard = () => {
               upload_preset: "gfgcloud",
             }
           );
-          console.log('File uploaded successfully:', response.data);
           setFormData((prevData) => ({
             ...prevData,
             image: response.data.url,
@@ -55,33 +56,48 @@ const PatientsDashboard = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3001/data", {
-        patientName: formData.patientName,
-        problem: formData.problem,
-        medicines: formData.medicines,
-        height: formData.height,
-        heartRate: formData.heartRate,
-        weight: formData.weight,
-        bloodGroup: formData.bloodGroup,
-        accessPolicy: formData.accessPolicy,
-        image: formData.image,
-      })
+      .post("http://localhost:3001/data", { ...formData, userId })
       .then((response) => {
-        console.log(response.data);
         if (response.data.status) {
-          console.log("Data stored successfully");
+          setSubmissions((prev) => [...prev, { ...formData, userId }]);
+          setFormData({
+            patientName: '',
+            problem: '',
+            medicines: '',
+            height: '',
+            heartRate: '',
+            weight: '',
+            bloodGroup: '',
+            accessPolicy: '',
+            image: null,
+          });
+          setImagePreview(null);
         }
       })
       .catch((err) => {
         console.error("Error storing data:", err);
       });
   };
-  
+
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/data/${userId}`);
+        if (response.data.status) {
+          setSubmissions(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching submissions:", error);
+      }
+    };
+    fetchSubmissions();
+  }, [userId]);
 
   return (
     <div className="dashboard-container">
       <h2>Patient Dashboard</h2>
       <form onSubmit={handleSubmit} className="dashboard-form">
+        {/* Form fields as before... */}
         <div className="form-group">
           <label>Patient Name:</label>
           <input 
@@ -192,6 +208,28 @@ const PatientsDashboard = () => {
         </div>
         <button type="submit" className="btn-submit">Submit</button>
       </form>
+
+      {/* Display submitted data */}
+      <h3>Submitted Data:</h3>
+      <ul>
+        {submissions.map((submission, index) => (
+          <li key={index}>
+            <strong>Name:</strong> {submission.patientName} | 
+            <strong>Problem:</strong> {submission.problem} | 
+            <strong>Medicines:</strong> {submission.medicines} | 
+            <strong>Height:</strong> {submission.height} cm | 
+            <strong>Heart Rate:</strong> {submission.heartRate} bpm | 
+            <strong>Weight:</strong> {submission.weight} kg | 
+            <strong>Blood Group:</strong> {submission.bloodGroup} | 
+            <strong>Access Policy:</strong> {submission.accessPolicy} | 
+            {submission.image && (
+              <>
+                <strong>Image:</strong> <img src={submission.image} alt="Patient" style={{ width: '50px', height: '50px', marginLeft: '10px' }} />
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

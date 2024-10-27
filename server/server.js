@@ -28,13 +28,26 @@ app.get("/", (req, res) => {
 
 app.post('/data', async (req, res) => {
   try {
-    const newData = new Data(req.body);
+    const userId = req.body.userId; // Assume userId is sent from the frontend
+    const newData = new Data({ ...req.body, userId });
     const savedData = await newData.save();
     res.status(201).json({ status: true, data: savedData });
   } catch (error) {
     res.status(400).json({ status: false, error: error.message });
   }
 });
+
+// Get submissions by user ID
+app.get('/data/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const userData = await Data.find({ userId });
+    res.status(200).json({ status: true, data: userData });
+  } catch (error) {
+    res.status(500).json({ status: false, error: error.message });
+  }
+});
+
 app.get('/data', async (req, res) => {
   try {
     const allData = await Data.find(); // Fetch all documents from the Data collection
@@ -43,6 +56,8 @@ app.get('/data', async (req, res) => {
     res.status(500).json({ status: false, error: error.message }); // Handle errors
   }
 });
+
+
 
 // Start the server and connect to MongoDB
 app.listen(process.env.PORT || 3001, async () => {

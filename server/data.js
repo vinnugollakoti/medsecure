@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const DataSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true, // Required to identify the user
+  },
   patientName: {
     type: String,
     required: true,

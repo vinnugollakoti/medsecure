@@ -187,4 +187,44 @@ body {
     height: 50px;
     border-radius: 5px;
   }
-  
+  /* Styles for the submitted data section */
+ul {
+  list-style-type: none; /* Remove default list styling */
+  padding: 0; /* Remove padding */
+  margin-top: 1rem; /* Space above the list */
+  width: 100%; /* Full width for alignment */
+  background-color: #1a1a1a; /* Background color matching the theme */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); /* Similar shadow effect */
+}
+
+li {
+  padding: 1rem; /* Padding for each item */
+  border-bottom: 1px solid #ffd700; /* Gold border between items */
+  color: #fff; /* Text color */
+  display: flex; /* Use flexbox for alignment */
+  justify-content: space-between; /* Space out items */
+  align-items: center; /* Center items vertically */
+}
+
+li:last-child {
+  border-bottom: none; /* Remove border from last item */
+}
+
+strong {
+  color: #ffd700; /* Gold color for strong text */
+}
+
+img {
+  width: 50px; /* Fixed width for images */
+  height: 50px; /* Fixed height for images */
+  border-radius: 5px; /* Rounded corners for images */
+  margin-left: 10px; /* Space to the left of the image */
+}
+
+@media (max-width: 600px) {
+  li {
+    flex-direction: column; /* Stack items on small screens */
+    align-items: flex-start; /* Align items to the left */
+  }
+}

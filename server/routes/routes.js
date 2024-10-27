@@ -4,9 +4,10 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv")
 const nodemailer = require("nodemailer");
+const cookieParser = require('cookie-parser');
 const otpGenerator = require("otp-generator");
 const User = require("../model")
-
+router.use(cookieParser());
 
 
 const transporter = nodemailer.createTransport({
@@ -18,59 +19,37 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post("/signup", async (req, res) => {
-    const { username, email, password, userType } = req.body;
-    console.log(req.body);
-  
-    try {
-      const existingUser = await User.findOne({ email: email });
-      if (existingUser) {
-        return res.status(400).json({ message: "User already exists" });
-      }
-  
-      const hashPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({
-        username,
-        email,
-        password: hashPassword,
-        userType, // Store userType
-      });
-  
-      await newUser.save();
-  
-      // Send welcome email
-      const mailOptions = {
-        from: "your_email@gmail.com",
-        to: email,
-        subject: "Welcome to Our Medsecure!",
-        html: `<h1>Hey ${username}, welcome to our Medsecure!</h1>`,
-      };
-  
-      await transporter.sendMail(mailOptions);
-  
-      // Generate JWT token
-      const token = jwt.sign({ username: newUser.username }, process.env.JWT_SECRET || "JWTCODE", { expiresIn: "1h" });
-  
-      // Set cookies
-      res.cookie('authToken', token, {
-        maxAge: 3600000, // 1 hour
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict'
-      });
-      res.cookie("username", newUser.username, {
-        maxAge: 3600000, // 1 hour
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict'
-      });
-  
-      console.log("User registered successfully");
-      return res.json({ status: true, message: "User registered successfully" });
-    } catch (error) {
-      console.error("Error registering user:", error);
-      return res.status(500).json({ message: "Error registering user" });
+  const { username, email, password, userType } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
     }
-  });
+
+    const hashPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, email, password: hashPassword, userType });
+    await newUser.save();
+
+    const mailOptions = {
+      from: "your_email@gmail.com",
+      to: email,
+      subject: "Welcome to Our Medsecure!",
+      html: `<h1>Hey ${username}, welcome to our Medsecure!</h1>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    const token = jwt.sign({ username: newUser.username }, process.env.JWT_SECRET || "JWTCODE", { expiresIn: "1h" });
+
+    res.cookie('authToken', token, { maxAge: 3600000, httpOnly: true, secure: false, sameSite: 'Strict' });
+    res.cookie("username", newUser.username, { maxAge: 3600000, httpOnly: true, secure: false, sameSite: 'Strict' });
+    console.log("cookies stored");
+    return res.json({ status: true, message: "User registered successfully" });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    return res.status(500).json({ message: "Error registering user" });
+  }
+});
   
 
 router.post("/login", async (req, res) => {
