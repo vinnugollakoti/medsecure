@@ -11,7 +11,7 @@ dotenv.config();
 
 // CORS configuration
 app.use(cors({
-  origin: ["http://localhost:5173", "https://s60-vinay-blogie.onrender.com", "https://blogie-1.netlify.app", "http://localhost:3001"],
+  origin: ["http://localhost:5173", "https://s60-vinay-blogie.onrender.com", "https://blogie-1.netlify.app", "http://localhost:3001", "https://medsecure.netlify.app/"],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
