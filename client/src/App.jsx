@@ -3,6 +3,7 @@ import Doctorsdashboard from "./Components/Doctorsdashboard"
 import Login from "./Components/Login"
 import PatientsDashboard from "./Components/PatientsDashboard"
 import Register from "./Components/Register"
+import Submission from "./Components/Submission"
 import "./App.css"
 
 
@@ -14,6 +15,7 @@ const App = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/pdashboard" element={<PatientsDashboard />} />
       <Route path="/ddashboard" element={<Doctorsdashboard />} />
+      <Route path="/submission" element={<Submission />} />
     </Routes>
     </BrowserRouter>
   )

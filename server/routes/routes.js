@@ -42,7 +42,7 @@ router.post("/signup", async (req, res) => {
     const token = jwt.sign({ username: newUser.username }, process.env.JWT_SECRET || "JWTCODE", { expiresIn: "1h" });
 
     res.cookie('authToken', token, { maxAge: 3600000, httpOnly: true, secure: false, sameSite: 'Strict' });
-    res.cookie("username", newUser.username, { maxAge: 3600000, httpOnly: true, secure: false, sameSite: 'Strict' });
+    res.cookie("username", newUser.username, { maxAge: 3600000, httpOnly: true, secure: "production", sameSite: 'Strict' });
     console.log("cookies stored");
     return res.json({ status: true, message: "User registered successfully" });
   } catch (error) {

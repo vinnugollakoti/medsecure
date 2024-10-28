@@ -26,6 +26,7 @@ const Register = () => {
     .then((response) => {
       if (response.data.status) {
         const redirectPath = userType === 'doctor' ? '/ddashboard' : '/pdashboard';
+        document.cookie = `username=${username}; path=/;`;
         setTimeout(() => {
           navigate(redirectPath);
         }, 3000);

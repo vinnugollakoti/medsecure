@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+
+export function getCookie(name) {
+  let cookieArray = document.cookie.split('; ');
+  let cookie = cookieArray.find((row) => row.startsWith(name + '='));
+  return cookie ? cookie.split('=')[1] : "";
+}
 
 const PatientsDashboard = () => {
-  const userId = '12345';
   const [formData, setFormData] = useState({
     patientName: '',
     problem: '',
@@ -15,8 +21,11 @@ const PatientsDashboard = () => {
     image: null,
   });
 
+  const navigate = useNavigate()
+
   const [imagePreview, setImagePreview] = useState(null);
   const [submissions, setSubmissions] = useState([]);
+  const [userId, setUserId] = useState(getCookie('username'));
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,6 +34,9 @@ const PatientsDashboard = () => {
       [name]: value,
     });
   };
+  const handleData = () => {
+    navigate("/submission")
+  }
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
@@ -90,7 +102,9 @@ const PatientsDashboard = () => {
         console.error("Error fetching submissions:", error);
       }
     };
-    fetchSubmissions();
+    if (userId) {
+      fetchSubmissions();
+    }
   }, [userId]);
 
   return (
@@ -208,10 +222,11 @@ const PatientsDashboard = () => {
         </div>
         <button type="submit" className="btn-submit">Submit</button>
       </form>
+      <br /><br />
 
-      {/* Display submitted data */}
-      <h3>Submitted Data:</h3>
-      <ul>
+      <button className='btn-submit' onClick={handleData}>Your Submissions</button>
+
+      {/* <ul>
         {submissions.map((submission, index) => (
           <li key={index}>
             <strong>Name:</strong> {submission.patientName} | 
@@ -229,7 +244,7 @@ const PatientsDashboard = () => {
             )}
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };
