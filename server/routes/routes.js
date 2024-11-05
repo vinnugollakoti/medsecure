@@ -52,12 +52,10 @@ router.post("/signup", async (req, res) => {
 });
   
 
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    console.log(user);
-
     if (!user) {
       return res.status(400).json({ message: "User is not registered" });
     }
@@ -83,8 +81,7 @@ router.post("/login", async (req, res) => {
       sameSite: 'Strict'
     });
 
-    console.log("Login successful");
-    return res.json({ message: "Login successful", authToken: token, username: user.username });
+    return res.json({ message: "Login successful", authToken: token, username: user.username, userType: user.userType });
   } catch (error) {
     console.error("Error logging in:", error);
     return res.status(500).json({ message: "Error logging in" });

@@ -28,11 +28,12 @@ app.get("/", (req, res) => {
 
 app.post('/data', async (req, res) => {
   try {
-    const userId = req.body.userId; // Assume userId is sent from the frontend
+    const userId = req.body.userId;
     const newData = new Data({ ...req.body, userId });
     const savedData = await newData.save();
     res.status(201).json({ status: true, data: savedData });
   } catch (error) {
+    console.log("catch block error")
     res.status(400).json({ status: false, error: error.message });
   }
 });
@@ -44,16 +45,17 @@ app.get('/data/:userId', async (req, res) => {
     const userData = await Data.find({ userId });
     res.status(200).json({ status: true, data: userData });
   } catch (error) {
-    res.status(500).json({ status: false, error: error.message });
+    console.log("catch block error")
+    res.status(500).json({ status: false, error: error.message + "catch block" });
   }
 });
 
 app.get('/data', async (req, res) => {
   try {
-    const allData = await Data.find(); // Fetch all documents from the Data collection
-    res.status(200).json(allData); // Send the data back as a JSON response
+    const allData = await Data.find();
+    res.status(200).json(allData);
   } catch (error) {
-    res.status(500).json({ status: false, error: error.message }); // Handle errors
+    res.status(500).json({ status: false, error: error.message });
   }
 });
 
