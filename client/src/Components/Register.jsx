@@ -17,7 +17,7 @@ const Register = () => {
     setLoading(true);
     setError('');
 
-    axios.post('http://localhost:3001/auth/signup', {
+    axios.post('https://medsecure-hccy.onrender.com/auth/signup', {
       username,
       email,
       password,

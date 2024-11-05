@@ -68,7 +68,7 @@ const PatientsDashboard = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:3001/data", { ...formData, userId })
+      .post("https://medsecure-hccy.onrender.com/data", { ...formData, userId })
       .then((response) => {
         if (response.data.status) {
           setSubmissions((prev) => [...prev, { ...formData, userId }]);
@@ -94,7 +94,7 @@ const PatientsDashboard = () => {
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/data/${userId}`);
+        const response = await axios.get(`https://medsecure-hccy.onrender.com/data/${userId}`);
         if (response.data.status) {
           setSubmissions(response.data.data);
         }

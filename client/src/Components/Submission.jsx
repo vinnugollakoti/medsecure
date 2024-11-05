@@ -15,7 +15,7 @@ const [userId, setUserId] = useState(getCookie('username'));
 useEffect(() => {
     const fetchSubmissions = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/data/${userId}`);
+        const response = await axios.get(`https://medsecure-hccy.onrender.com/data/${userId}`);
         if (response.data.status) {
           setSubmissions(response.data.data);
         }
